@@ -58,7 +58,6 @@ cv
 
 ############### Relação com o álcool #################################
 # 1. Escola em que estudou e toma bebida alcoolica
-by(alcohol_database$VEICULO, 1, mean)
 
 # 2. Escola em que estudou e na família as pessoas tomam bebidas alcoólicas
 
@@ -81,7 +80,15 @@ by(alcohol_database$VEICULO, 1, mean)
 
 # 2. Quantos copos por dias viuvos e divorciados tomam bebidas alcoolicas
 
-# 3. Moda dos tipos de bebida alcoolica tomada agrupada pelo estado civil
+#########################################################################
+
+############################ Moda #######################################
+# 1. Moda da Idade
+#which.max(alcohol_database$IDADE)# Pega a posição do maior valor
+alcohol_database[which.max(alcohol_database$IDADE),4]
+
+# 1. Moda da Renda Familiar
+alcohol_database[which.max(alcohol_database$RENDA_FAMILI),8]
 
 #########################################################################
 
