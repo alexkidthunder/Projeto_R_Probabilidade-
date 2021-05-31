@@ -58,6 +58,7 @@ cv
 
 ############### Relação com o álcool #################################
 # 1. Escola em que estudou e toma bebida alcoolica
+by(alcohol_database$VEICULO, 1, mean)
 
 # 2. Escola em que estudou e na família as pessoas tomam bebidas alcoólicas
 
