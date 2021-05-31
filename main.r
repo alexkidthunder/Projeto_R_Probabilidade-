@@ -9,13 +9,14 @@
 ########################################
 # Instalação dos pacotes no ambiente R #
 ########################################
+install.packages("scales") # Install and load scales
 install.packages('readxl') # importar banco em excel
 install.packages('descr') # crosstable e teste qui-quadrado
 
 ##################
 # Chamada pacote #
 ##################                
-library(readxl, descr) # Load libraries
+library(readxl, descr, scales) # Load libraries
 
 #################################
 # Selecionando o banco de dados #
@@ -25,23 +26,54 @@ alcohol_database <- read_excel(
 )
 View(alcohol_database)
 
+
+#######################################################
+# CRIANDO FUNÇÕES, PORQUE CANSEI DE PESQUISAR NO GOOGLE
+#######################################################
+giveme_percentage <- function(column_values, by=0) {
+  counter_specific <- 0
+  total <- 0
+  for(element in column_values) {
+    if(!is.na(element)) {
+      if (!is.null(element) && element == by) {
+        counter_specific <- counter_specific + 1
+      }
+    }
+    total <- total + 1
+  }
+  return(scales::percent(counter_specific / total))
+}
+
+percentage_wrapper <- function(column) {
+  for(key in unique(column)) {
+    if(!is.na(key)) {
+      percentage_calculated <- giveme_percentage(column, key)
+      cat(sprintf("\"%s\" \"%s\"\n", key, percentage_calculated))
+    }
+  }
+}
+
 #########################################
 # Começar a pegar os dados para análise #
 #########################################
 
 ################### Porcentagens #######################
 # 1. Porcentagem de pessoas por sexo
+GENDER <- factor(alcohol_database$SEXO, levels=c(1,2), labels=c("homem", "mulher"))
+percentage_wrapper(GENDER)
 
 # 2. Porcentagem de pessoas por curso
+percentage_wrapper(alcohol_database$CURSO)
 
 # 3. Porcentagem de pessoas que moram com a familia e não bebem
-
+percentage_wrapper(alcohol_database$MORA_COM)
 ########################################################
+
 
 ################ Média Idade ###########################
 # 1. Média da idade daqueles que responderam
 avg_age <- mean(alcohol_database$IDADE)
-avg_age
+print(avg_age)
 
 # 2. Média de idade por curso
 tapply(alcohol_database$IDADE, alcohol_database$CURSO, mean)
@@ -52,7 +84,7 @@ tapply(alcohol_database$IDADE, alcohol_database$PRESSAO, mean)
 
 # 4. Qual o coeficiente de variação da idade daqueles que são solteiros?
 cv <- sd(alcohol_database$IDADE)/mean(alcohol_database$IDADE)*100 
-cv
+print(cv)
 
 ########################################################
 
