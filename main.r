@@ -31,17 +31,29 @@ View(alcohol_database)
 
 ################### Porcentagens #######################
 # 1. Porcentagem de pessoas por sexo
+
 # 2. Porcentagem de pessoas por curso
+
 # 3. Porcentagem de pessoas que moram com a familia e não bebem
+
 ########################################################
 
 ################ Média Idade ###########################
 # 1. Média da idade daqueles que responderam
 avg_age <- mean(alcohol_database$IDADE)
+avg_age
+
 # 2. Média de idade por curso
 tapply(alcohol_database$IDADE, alcohol_database$CURSO, mean)
+
 # 3. Média de idade em que começou a beber por vontade própria ou por “pressão” de algum conhecido
+tapply(alcohol_database$IDADE, alcohol_database$PQ_COMECOU, mean)
+tapply(alcohol_database$IDADE, alcohol_database$PRESSAO, mean)
+
 # 4. Qual o coeficiente de variação da idade daqueles que são solteiros?
+cv <- sd(alcohol_database$IDADE)/mean(alcohol_database$IDADE)*100 
+cv
+
 ########################################################
 
 ############### Relação com o álcool #################################
