@@ -57,6 +57,7 @@ percentage_wrapper <- function(column) {
 getmoda <- function(v) {
   uniqv <- unique(v)
   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
 
 get_mode <- function(received_vector) {
   unique_values <- unique(received_vector)
@@ -183,19 +184,6 @@ percentage_wrapper(drink_semester_labels)
 start_drink <- factor(alcohol_database$`PQ_COME€OU`, levels=c(1,2,3,4), labels=c("iniciativa própria", "incentivo de amigos", "incentivo da família","outros motivos"))
 start_drink_per_semester_mode <- tapply(start_drink, semester, get_mode)
 print(start_drink_per_semester_mode)
-######################################################################
-
-##################### Embriaguez ao volante ##########################
-# 1. Já sofreu algum acidente de carro por conta da bebida e dirigiu sobre efeito do álcool
-
-# 2. Já sofreu algum acidente de carro por conta da bebida e pegou carona com alguém que dirigiu sobre efeito do álcool
-
-# 3. Já sofreu algum acidente de carro por conta da bebida e (dirigiu sobre efeito do álcool) ou (pegou carona com alguém que dirigiu sobre efeito do álcool)
-
-# 4. Já sofreu algum acidente de carro por conta da bebida e possui veiculo
-
-# 5. Quantas pessoas tomam bebida alcoólica e já pegaram carona com alguém que dirigiu sob efeito do álcool?
-
 ######################################################################
 
 ###################### Curso #########################################
