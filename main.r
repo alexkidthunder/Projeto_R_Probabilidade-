@@ -106,7 +106,8 @@ mean_age_course <- tapply(alcohol_database$IDADE, alcohol_database$CURSO, mean)
 print(mean_age_course)
 
 # 3. Média de idade em que começou a beber por vontade própria ou por “pressão” de algum conhecido
-tapply(alcohol_database$IDADE, alcohol_database$PQ_COMECOU, mean)
+why_start <- factor(alcohol_database$PQ_COMECOU, levels = c(1,2,3,4), labels=c("iniciativa própria", "incentivo de amigos", "incentivo da família", "outros motivos"))
+tapply(alcohol_database$IDADE, why_start, mean)
 tapply(alcohol_database$IDADE, alcohol_database$PRESSAO, mean)
 
 # 4. Qual o coeficiente de variação da idade daqueles que são solteiros?
@@ -118,7 +119,7 @@ print(cv)
 
 ############### Relação com o álcool #################################
 # 1. Escola em que estudou e toma bebida alcoolica
-school_type <- factor(alcohol_database$`ESCOLA Q ESTUDOU`, levels = c(1,2), labels=c("Pública", "Privada"))
+school_type <- factor(alcohol_database$ESCOLA_Q_ESTUDOU, levels = c(1,2), labels=c("Pública", "Privada"))
 you_drink <- factor(alcohol_database$VC_BEBI, levels = c(1,2), labels=c("Sim", "Não"))
 school_drink <- tapply(school_type, you_drink, table)
 print(school_drink)
@@ -140,12 +141,12 @@ percentage_wrapper(mean_single_drink)
 ###################### Estado Civil #####################################
 # 1. Com que frequencia casados tomam bebidas alcoolicas
 casado <- alcohol_database[alcohol_database$ESTADO_CIVIL == 2 & 1 ,13]
-drink_live_family <- factor(casado$VC_BEBI, levels=c(1,2), labels=c("Toma", "N�o toma"))
+drink_live_family <- factor(casado$VC_BEBI, levels=c(1,2), labels=c("Toma", "Não toma"))
 percentage_wrapper(drink_live_family)
 
-# 2. Quantos copos por dias estudantes com relacionamento est�vel tomam bebidas alcoolicas
+# 2. Quantos copos por dias estudantes com relacionamento est?vel tomam bebidas alcoolicas
 total <- alcohol_database[alcohol_database$ESTADO_CIVIL == 5 ,15]
-sum(total, na.rm=T)# Somatorio
+mean(total[!is.na(total)])# Somatorio
 
 #########################################################################
 
@@ -156,7 +157,7 @@ sum(total, na.rm=T)# Somatorio
 e <- c(alcohol_database$IDADE)
 getmoda(e)
 
-# 1. Moda da Renda Familiar
+# 2. Moda da Renda Familiar
 v <- c(alcohol_database$RENDA_FAMILI)
 getmoda(v)
 
@@ -180,7 +181,7 @@ drink_semester_labels <- get_semester_labels(drink_by_semester$SEMESTRE)
 percentage_wrapper(drink_semester_labels)
 
 # 4. A Moda de semestres com relação ao motivo pelo qual começaram a beber
-start_drink <- factor(alcohol_database$`PQ_COME€OU`, levels=c(1,2,3,4), labels=c("iniciativa própria", "incentivo de amigos", "incentivo da família","outros motivos"))
+start_drink <- factor(alcohol_database$PQ_COMECOU, levels=c(1,2,3,4), labels=c("iniciativa própria", "incentivo de amigos", "incentivo da família","outros motivos"))
 start_drink_per_semester_mode <- tapply(start_drink, semester, get_mode)
 print(start_drink_per_semester_mode)
 ######################################################################
@@ -213,8 +214,8 @@ renda <- sd(esc_parti$RENDA_FAMILI, na.rm=T)
 print(renda)
 
 # 3. Média da renda familiar de pessoas que moram com a familia
-renda_family <- alcohol_database[alcohol_database$MORA_COM == 3 ,9]
-med <- mean(renda_family$MORA_COM,na.rm=T)
+renda_family <- alcohol_database[alcohol_database$MORA_COM == 3, 8]
+med <- mean(renda_family$RENDA_FAMILI,na.rm=T)
 print(med)
 
 ######################################################################
