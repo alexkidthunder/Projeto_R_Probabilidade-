@@ -57,6 +57,20 @@ percentage_wrapper <- function(column) {
 getmoda <- function(v) {
   uniqv <- unique(v)
   uniqv[which.max(tabulate(match(v, uniqv)))]
+
+get_mode <- function(received_vector) {
+  unique_values <- unique(received_vector)
+  valid_values <- unique_values[!is.na(unique_values)]
+  matches <- match(received_vector, unique_values)
+  #b <- tabulate(matches)
+  b <- table(valid_values)
+  return(names(b)[which.max(b)])
+}
+
+get_semester_labels <- function(received_vector) {
+  semester_levels <- c(1,2,3,4,5,6,7,8,9,10)
+  semester_labels <- c("primeiro", "segundo", "terceiro", "quarto", "quinto", "sexto", "setimo", "oitavo", "nono", "decimo")
+  return(factor(received_vector, levels=semester_levels, labels=semester_labels))
 }
 
 #########################################
@@ -73,8 +87,11 @@ percentage_wrapper(alcohol_database$CURSO)
 
 
 # 3. Porcentagem de pessoas que moram com a familia e não bebem
-#alcohol_database[alcohol_database$MORA_COM == 3,13] #pegar todos que tem3 na outra tab
-percentage_wrapper(alcohol_database$MORA_COM)
+# SELECT * FROM ALCOHOL_DATABASE WHERE MORA_COM = 3 AND VC_BEBI = 1
+live_family <- alcohol_database[alcohol_database$MORA_COM == 3 ,13]
+drink_live_family <- factor(live_family$VC_BEBI, levels=c(1,2), labels=c("Sim", "Não"))
+percentage_wrapper(drink_live_family)
+
 ########################################################
 
 
@@ -84,26 +101,34 @@ avg_age <- mean(alcohol_database$IDADE)
 print(avg_age)
 
 # 2. Média de idade por curso
-tapply(alcohol_database$IDADE, alcohol_database$CURSO, mean)
+mean_age_course <- tapply(alcohol_database$IDADE, alcohol_database$CURSO, mean)
+print(mean_age_course)
 
 # 3. Média de idade em que começou a beber por vontade própria ou por “pressão” de algum conhecido
 tapply(alcohol_database$IDADE, alcohol_database$PQ_COMECOU, mean)
 tapply(alcohol_database$IDADE, alcohol_database$PRESSAO, mean)
 
 # 4. Qual o coeficiente de variação da idade daqueles que são solteiros?
-cv <- sd(alcohol_database$IDADE)/mean(alcohol_database$IDADE)*100 
+single_ages <- alcohol_database[alcohol_database$ESTADO_CIVIL == 1, 4]
+cv <- sd(single_ages$IDADE)/mean(single_ages$IDADE)*100
 print(cv)
 
 #######################################################################
 
 ############### Relação com o álcool #################################
 # 1. Escola em que estudou e toma bebida alcoolica
-table (alcohol_database$ESCOLA_Q_ESTUDOU,alcohol_database$VC_BEBI)# Mostra tudo sem separar
+school_type <- factor(alcohol_database$`ESCOLA Q ESTUDOU`, levels = c(1,2), labels=c("Pública", "Privada"))
+you_drink <- factor(alcohol_database$VC_BEBI, levels = c(1,2), labels=c("Sim", "Não"))
+school_drink <- tapply(school_type, you_drink, table)
+print(school_drink)
 
 # 2. Escola em que estudou e na família as pessoas tomam bebidas alcoólicas
 table (alcohol_database$ESCOLA_Q_ESTUDOU,alcohol_database$FAMILIA_BEBI)
 
 # 3. Qual a média de casos que uma pessoa solteira acha importante a bebida alcoólica na vida dela?
+single_and_drink <- alcohol_database[alcohol_database$ESTADO_CIVIL == 1, 13]
+mean_single_drink <- factor(single_and_drink$VC_BEBI, levels = c(1,2), labels=c("Sim", "Não"))
+percentage_wrapper(mean_single_drink)
 
 # 4. Com que frequência cada estado civil toma bebida alcoólica nos fins de semana?
 
@@ -140,13 +165,24 @@ getmoda(v)
 
 #################### Semestre e bebida ##################################
 # 1. Qual o tipo de bebida mais consumido por semestre
+drink_type <- factor(alcohol_database$TIPO, levels = c(1,2,3,4), labels = c("Cerveja", "Vinho", "\"ICE\"", "Outro"))
+semester <- get_semester_labels(alcohol_database$SEMESTRE)
+mode_drink_per_semester <- tapply(drink_type, semester, get_mode)
+print(mode_drink_per_semester)
 
-# 2. Qual o tipo de bebida mais consumido por semestre e por curso
+# 2. Quantidade de pessoas por semestre e por curso
+semester_course <- tapply(get_semester_labels(alcohol_database$SEMESTRE), alcohol_database$CURSO, table)
+print(semester_course)
 
 # 3. Porcentagem de pessoas que tomam bebida alcoolica por semestre
+drink_by_semester <- alcohol_database[alcohol_database$VC_BEBI == 1 ,2]
+drink_semester_labels <- get_semester_labels(drink_by_semester$SEMESTRE)
+percentage_wrapper(drink_semester_labels)
 
-# 4. A Moda de semestres com relação ao motivo pelo qual começaram a beber 
-
+# 4. A Moda de semestres com relação ao motivo pelo qual começaram a beber
+start_drink <- factor(alcohol_database$`PQ_COME€OU`, levels=c(1,2,3,4), labels=c("iniciativa própria", "incentivo de amigos", "incentivo da família","outros motivos"))
+start_drink_per_semester_mode <- tapply(start_drink, semester, get_mode)
+print(start_drink_per_semester_mode)
 ######################################################################
 
 ##################### Embriaguez ao volante ##########################
