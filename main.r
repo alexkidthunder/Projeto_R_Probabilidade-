@@ -135,18 +135,17 @@ percentage_wrapper(mean_single_drink)
 
 # 5. Com que frequência pessoas casadas tomam bebida , e quantos copos tomam por dia?
 
-# 6. Pessoas que responderam que a bebida é importante na vida baseado na idade que começaram a beber
-
-# 7. Imagem que a bebida alcoólica causa em você e Já deu algum vexame por causa da bebida
-
-# 8. Por que começou a tomar bebida alcoólica e que imagem causa em você a bebida alcoólica
-
 ######################################################################
 
 ###################### Estado Civil #####################################
-# 1. Com que frequencia viuvos e divorciados tomam bebidas alcoolicas
+# 1. Com que frequencia casados tomam bebidas alcoolicas
+casado <- alcohol_database[alcohol_database$ESTADO_CIVIL == 2 & 1 ,13]
+drink_live_family <- factor(casado$VC_BEBI, levels=c(1,2), labels=c("Toma", "N�o toma"))
+percentage_wrapper(drink_live_family)
 
-# 2. Quantos copos por dias viuvos e divorciados tomam bebidas alcoolicas
+# 2. Quantos copos por dias estudantes com relacionamento est�vel tomam bebidas alcoolicas
+total <- alcohol_database[alcohol_database$ESTADO_CIVIL == 5 ,15]
+sum(total, na.rm=T)# Somatorio
 
 #########################################################################
 
@@ -189,7 +188,8 @@ print(start_drink_per_semester_mode)
 ###################### Curso #########################################
 # 1. Qual a amplitude das pessoas do curso de civil morar com os alguém?
 civil_mora <- alcohol_database[alcohol_database$CURSO == 'civil' ,9]
-diff(range(civil_mora, na.rm=T))
+amplitude <- diff(range(civil_mora, na.rm=T))
+print(amplitude)
 
 # 2. Variância da idade das pessoas do curso de civil em relação a de matemática.
 var_idade <- alcohol_database[alcohol_database$CURSO == 'civil' ,4]
