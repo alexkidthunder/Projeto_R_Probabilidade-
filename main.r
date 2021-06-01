@@ -16,7 +16,8 @@ install.packages('descr') # crosstable e teste qui-quadrado
 ##################
 # Chamada pacote #
 ##################                
-library(readxl, descr, scales) # Load libraries
+library(readxl, descr) # Load libraries
+library(scales)
 
 #################################
 # Selecionando o banco de dados #
@@ -53,6 +54,11 @@ percentage_wrapper <- function(column) {
   }
 }
 
+getmoda <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
 #########################################
 # Começar a pegar os dados para análise #
 #########################################
@@ -65,12 +71,14 @@ percentage_wrapper(GENDER)
 # 2. Porcentagem de pessoas por curso
 percentage_wrapper(alcohol_database$CURSO)
 
+
 # 3. Porcentagem de pessoas que moram com a familia e não bebem
+#alcohol_database[alcohol_database$MORA_COM == 3,13] #pegar todos que tem3 na outra tab
 percentage_wrapper(alcohol_database$MORA_COM)
 ########################################################
 
 
-################ Média Idade ###########################
+################ Média Idade ##########################################
 # 1. Média da idade daqueles que responderam
 avg_age <- mean(alcohol_database$IDADE)
 print(avg_age)
@@ -86,12 +94,14 @@ tapply(alcohol_database$IDADE, alcohol_database$PRESSAO, mean)
 cv <- sd(alcohol_database$IDADE)/mean(alcohol_database$IDADE)*100 
 print(cv)
 
-########################################################
+#######################################################################
 
 ############### Relação com o álcool #################################
 # 1. Escola em que estudou e toma bebida alcoolica
+table (alcohol_database$ESCOLA_Q_ESTUDOU,alcohol_database$VC_BEBI)# Mostra tudo sem separar
 
 # 2. Escola em que estudou e na família as pessoas tomam bebidas alcoólicas
+table (alcohol_database$ESCOLA_Q_ESTUDOU,alcohol_database$FAMILIA_BEBI)
 
 # 3. Qual a média de casos que uma pessoa solteira acha importante a bebida alcoólica na vida dela?
 
@@ -117,10 +127,14 @@ print(cv)
 ############################ Moda #######################################
 # 1. Moda da Idade
 #which.max(alcohol_database$IDADE)# Pega a posição do maior valor
-alcohol_database[which.max(alcohol_database$IDADE),4]
+#max(alcohol_database$IDADE)# Pega o maior valor
+e <- c(alcohol_database$IDADE)
+getmoda(e)
 
 # 1. Moda da Renda Familiar
-alcohol_database[which.max(alcohol_database$RENDA_FAMILI),8]
+v <- c(alcohol_database$RENDA_FAMILI)
+getmoda(v)
+
 
 #########################################################################
 
@@ -149,26 +163,45 @@ alcohol_database[which.max(alcohol_database$RENDA_FAMILI),8]
 ######################################################################
 
 ###################### Curso #########################################
-# 1. Qual a amplitude das pessoas do curso de civil morar com os amigos e que não toma bebida alcoólica?
+# 1. Qual a amplitude das pessoas do curso de civil morar com os alguém?
+civil_mora <- alcohol_database[alcohol_database$CURSO == 'civil' ,9]
+diff(range(civil_mora, na.rm=T))
 
 # 2. Variância da idade das pessoas do curso de civil em relação a de matemática.
+var_idade <- alcohol_database[alcohol_database$CURSO == 'civil' ,4]
+variancia <- var(var_idade$IDADE, na.rm=T)
+print(variancia)
 
 ######################################################################
 
 #################### Renda ###########################################
 # 1. Qual o desvio padrão da renda familiar daqueles que bebem 8 copos de bebida alcoólica por dia?
+rend_bebem <- alcohol_database[alcohol_database$QNTOS_COPOS == 8 ,8]
+copos <- sd(rend_bebem$RENDA_FAMILI, na.rm=T)
+print(copos)
 
-# 2. Desvio padrão da entre a renda familiar de pessoas que estudaram em escola particular e pessoas que estudaram em escola publica
+# 2. Desvio padrão entre a renda familiar de pessoas que estudaram em escola particular e pessoas que estudaram em escola publica
+esc_public <- alcohol_database[alcohol_database$ESCOLA_Q_ESTUDOU == 2 ,8]
+rend <- sd(esc_public$RENDA_FAMILI, na.rm=T)
+print(rend)
+esc_parti <- alcohol_database[alcohol_database$ESCOLA_Q_ESTUDOU == 1 ,8]
+renda <- sd(esc_parti$RENDA_FAMILI, na.rm=T)
+print(renda)
 
 # 3. Média da renda familiar de pessoas que moram com a familia
+renda_family <- alcohol_database[alcohol_database$MORA_COM == 3 ,9]
+med <- mean(renda_family$MORA_COM,na.rm=T)
+print(med)
 
 ######################################################################
 
 ################### Religião #########################################
-# 1. Média de pessoas que começaram a beber por vontade própria ou por “pressão” de algum conhecido agrupado por religião
+# 1. Média de pessoas que começaram a beber por vontade própria agrupado por religião
+religian <- factor(alcohol_database$religiao, levels=c(1,2,3), labels=c("Católica", "Evangélica","Outra "))
+tapply(alcohol_database$PRESSAO, religian, mean, na.rm=T)
 
 # 2. Moda da imagem que a bebida alcoólica causa, agrupado por religião
-
-# 3. Porcentagem de pessoas que bebem na familia agrupados por religião
+c <- c(alcohol_database$Q_IMAGEM_CAUSA)
+getmoda(c)
 
 ######################################################################
