@@ -74,6 +74,11 @@ get_semester_labels <- function(received_vector) {
   return(factor(received_vector, levels=semester_levels, labels=semester_labels))
 }
 
+###################################################
+# Caso tenha que modificar informações nno banco #
+###################################################
+fix(alcohol_database)
+
 #########################################
 # Começar a pegar os dados para análise #
 #########################################
@@ -132,10 +137,6 @@ single_and_drink <- alcohol_database[alcohol_database$ESTADO_CIVIL == 1, 13]
 mean_single_drink <- factor(single_and_drink$VC_BEBI, levels = c(1,2), labels=c("Sim", "Não"))
 percentage_wrapper(mean_single_drink)
 
-# 4. Com que frequência cada estado civil toma bebida alcoólica nos fins de semana?
-
-# 5. Com que frequência pessoas casadas tomam bebida , e quantos copos tomam por dia?
-
 ######################################################################
 
 ###################### Estado Civil #####################################
@@ -160,7 +161,6 @@ getmoda(e)
 # 2. Moda da Renda Familiar
 v <- c(alcohol_database$RENDA_FAMILI)
 getmoda(v)
-
 
 #########################################################################
 
@@ -225,8 +225,28 @@ print(med)
 religian <- factor(alcohol_database$religiao, levels=c(1,2,3), labels=c("Católica", "Evangélica","Outra "))
 tapply(alcohol_database$PRESSAO, religian, mean, na.rm=T)
 
+pie(table(alcohol_database$religiao), main = "Quantidade de cada religião",labels = c("Católica","Evangélica","Outra"))
+
 # 2. Moda da imagem que a bebida alcoólica causa, agrupado por religião
 c <- c(alcohol_database$Q_IMAGEM_CAUSA)
 getmoda(c)
 
+######################################################################
+
+################### Dados Gráficos Básicos #########################################
+# 1. Gráfico agrupado por religião
+attach(alcohol_database)
+pie(table(religiao), main = "Quantidade de cada religião",labels = c("Católica","Evangélica","Outra"))
+
+# 2. Gráfico agrupado por Escolaridade
+pie(table(ESCOLA_Q_ESTUDOU), main = "Quantidade de cada tipo de escola que estudou",labels = c("Pública","Privada"))
+
+# 3. Gráfico agrupado por aqueles que bebem ou não.
+pie(table(VC_BEBI), main = "Quantidade que tomam bebida alcoolica",labels = c("Bebem","Não Bebem"),col = c("blue", "red"))
+
+# 4. Gráfico agrupado por aqueles que bebem ou não.
+plot(IDADE,TIPO, main = "Distribuição da idade por diferença do peso.", col="blue")
+
+# 5. Gráfico agrupado a frequência que bebe.
+plot(FREQUENCIA, main = "Frequência que Bebe.", col="black")
 ######################################################################
